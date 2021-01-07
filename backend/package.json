@@ -1,0 +1,20 @@
+{
+  "name": "ezorders",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:fillipeags/ezOrders.git",
+  "author": "Fillipe Augusto <38387593+fillipeags@users.noreply.github.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon src/index.js"
+  },
+  "devDependencies": {
+    "eslint": "^7.17.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1",
+    "nodemon": "^2.0.7"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
