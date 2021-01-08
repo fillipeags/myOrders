@@ -5,7 +5,11 @@ export const Container = styled.div`
 
   display: grid;
   grid-gap: 1.6rem;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr;
+
+  @media (min-width: 658px){
+    grid-template-columns: repeat(2, 1fr);
+  }
 `;
 
 export const Card = styled.div`
