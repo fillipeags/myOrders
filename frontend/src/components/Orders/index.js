@@ -1,61 +1,69 @@
-import { Container } from './styles'
-import { Card } from './styles'
+import { useEffect, useState } from 'react';
+import socketIOClient from 'socket.io-client';
+
+import { Container, Card } from './styles'
 
 export default function Orders(){
+  const [orders, setOrders] = useState([]);
+
+  useEffect(() => {
+    (async () => {
+      const res = await fetch('http://localhost:3001/orders');
+      const orders = await res.json();
+      setOrders(orders);
+    })();
+
+    const socket = socketIOClient('http://localhost:3001', {
+      transports: ['websocket'],
+    });
+
+    socket.on('newOrder', (order) => {
+      setOrders(
+        (prevState) => [order, ...prevState],
+      );
+    });
+
+    socket.on('statusChange', (updatedOrder) => {
+      setOrders((prevState) =>(
+        prevState.map((order) =>(
+          order._id === updatedOrder._id ? updatedOrder : order
+        ))
+      ));
+    })
+
+    }, []);
+
+  function handleStatusChange(order){
+    return ({ target : { value } }) => {
+      fetch(`http://localhost:3001/orders/${order._id}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ status: value }),
+      })
+    };
+  }
+
   return(
     <Container>
-      <Card>
-        <header>
-          <h3>Pedido <strong>#231321</strong></h3>
-          <small>MESA #001</small>
-        </header>
+      {orders.map((order) => (
+        <Card key={order._id} status={order.status}>
+          <header>
+            <h3>Pedido <strong>#{order._id.substr(0, 15)}</strong></h3>
+            <small>MESA #{order.table}</small>
+          </header>
 
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-        Ratione porro laborum, nostrum doloremque rem dolorem nihil?
-        </p>
-        
-        <select>
-          <option value="PENDING">Pendente</option>
-          <option value="PREPARING">Preparando</option>
-          <option value="DONE">Finalizando</option>
-        </select>
-      </Card>
+          <p>{order.description}</p>
+          
+          <select value={order.status} onChange={handleStatusChange(order)}>
+            <option value="PENDING">Pendente</option>
+            <option value="PREPARING">Preparando</option>
+            <option value="DONE">Finalizando</option>
+          </select>
+        </Card>      
 
-      <Card status="PREPARING">
-        <header>
-          <h3>Pedido <strong>#231321</strong></h3>
-          <small>MESA #001</small>
-        </header>
-
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-        Ratione porro laborum, nostrum doloremque rem dolorem nihil?
-        </p>
-        
-        <select>
-          <option value="PENDING">Pendente</option>
-          <option value="PREPARING">Preparando</option>
-          <option value="DONE">Finalizando</option>
-        </select>
-      </Card>
-
-      <Card status="DONE">
-        <header>
-          <h3>Pedido <strong>#231321</strong></h3>
-          <small>MESA #001</small>
-        </header>
-
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-        Ratione porro laborum, nostrum doloremque rem dolorem nihil?
-        </p>
-        
-        <select>
-          <option value="PENDING">Pendente</option>
-          <option value="PREPARING">Preparando</option>
-          <option value="DONE">Finalizando</option>
-        </select>
-      </Card>
-
-      
+      ))}
     </Container>
   );
 }
