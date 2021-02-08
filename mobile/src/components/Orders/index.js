@@ -4,6 +4,12 @@ import socketIOClient from "socket.io-client";
 
 import { List, Card, Status, TableNumber } from "./styles";
 
+const statuses = {
+  PENDING: "PENDENTE",
+  PREPARING: "PREPARANDO",
+  DONE: "FINALIZADO",
+};
+
 export default function Order() {
   const [orders, setOrders] = useState([]);
 
@@ -38,7 +44,7 @@ export default function Order() {
       renderItem={({ item: order }) => (
         <Card status={order.status}>
           <TableNumber status={order.status}>#{order.table}</TableNumber>
-          <Status status={order.status}>{order.status}</Status>
+          <Status status={order.status}>{statuses[order.status]}</Status>
         </Card>
       )}
     />
