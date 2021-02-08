@@ -10,7 +10,7 @@ import Modal from "./components/Modal";
 import logo from "./images/logo.png";
 
 export default function Home() {
-  const [isModalOpened, setIsModalOpened] = useState(true);
+  const [isModalOpened, setIsModalOpened] = useState(false);
 
   function handleToggleModal() {
     setIsModalOpened((prevState) => !prevState);
